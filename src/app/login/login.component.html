@@ -1,0 +1,43 @@
+<div style="text-align:center; background-color: red; position: absolute; width: 100%;" >
+    <img width="100" alt="Angular Logo" src="assets/images/dpalogo.png">
+    <h1 style="margin-top: -1%; padding-top:15px; color:white">
+      {{ title }}
+    </h1> 
+  </div>
+<div class="example-container">
+    <h2 class="loginId" *ngIf="!isPasswordForgetten">Log in</h2>
+    <h4 class="loginId" *ngIf="isPasswordForgetten">Voeg uw DPA email adress</h4>
+    <form class="login-form" [formGroup]="loginService.loginForm" *ngIf="!isPasswordForgetten">  
+      <mat-form-field>
+        <input matInput placeholder="Gebruiker naam" formControlName="userName">
+        <mat-error>{{loginErrorMessage('Gebruiker naam','userName')}}</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field>
+          <input matInput placeholder="Wachtwoord" [type]="hide ? 'password' : 'text'" formControlName="password">
+          <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+      </mat-form-field>
+      <button mat-button class="submit-button" (click)="logIn()">Submit</button>
+      <br/>
+      <button class="button-password-forget" mat-button (click)="passWordForgetten()">Wachtwoord vergeten</button>
+    </form>
+     
+    <!-- Wachtwoord vergeten -->
+    
+    <form class="login-form" [formGroup]="loginService.passwordForgettenForm" *ngIf="isPasswordForgetten">  
+      <mat-form-field>
+        <input matInput placeholder="Gebruiker naam" formControlName="userName" >
+        <mat-error>
+          {{resetPasswordErrorMessage('Gebruiker naam','userName')}}
+        </mat-error>
+      </mat-form-field>
+      <button mat-button class="submit-button" (click)="loginService.checkForResetPassword()">Submit</button>
+      <br/>
+      <button class="button-password-forget" mat-button style="width: 50px;" (click)="passWordForgetten()">Terug</button>
+    </form>
+    
+</div>
+
+

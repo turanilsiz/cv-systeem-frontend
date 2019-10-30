@@ -1,0 +1,112 @@
+<form class="example-form" [formGroup]="trainingService.trainingForm">
+            
+        <!-- Jaar -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('year')" formControlName="year" required>
+            <mat-error *ngIf="trainingService.trainingForm.controls['year'].hasError('required')">
+                {{resourceService.cvresources.get('year') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="trainingService.trainingForm.controls['year'].hasError('maxlength')">
+                {{resourceService.cvresources.get('year') + resourceService.cvresources.get('maxLength')+4}}
+            </mat-error>
+            <mat-error *ngIf="trainingService.trainingForm.controls['year'].hasError('minlength')">
+                {{resourceService.cvresources.get('year') + resourceService.cvresources.get('minLength')+4}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Instituut -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('institute')" formControlName="institute" required>
+            <mat-error *ngIf="trainingService.trainingForm.controls['institute'].hasError('required')">
+                {{resourceService.cvresources.get('institute') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="trainingService.trainingForm.controls['institute'].hasError('maxlength')">
+                {{resourceService.cvresources.get('institute') + resourceService.cvresources.get('maxLength')+500}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Training -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('training')" formControlName="training" required>
+            <mat-error *ngIf="trainingService.trainingForm.controls['training'].hasError('required')">
+                {{resourceService.cvresources.get('training') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="trainingService.trainingForm.controls['training'].hasError('maxlength')">
+                {{resourceService.cvresources.get('training') + resourceService.cvresources.get('maxLength')+500}}
+            </mat-error>
+        </mat-form-field>
+        <button class="button" mat-button (click)="trainingService.addTrainingToTable()">{{resourceService.cvresources.get('add')}}</button>         
+    </form>
+    <!-- Training tabel -->
+    <table mat-table [dataSource]="trainingService.dataSourceTraining" class="mat-elevation-z8"> 
+
+        <ng-container matColumnDef="year">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('year')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(trainingService.trainings[index]['year'])">
+                <app-editable >
+                    <ng-template appViewMode> {{element.year}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'year', 'trainingService', 'trainings', 4, 3)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'year', 'trainingService', 'trainings', 4, 4)"  [value]="trainingService.trainings[index]['year']" (input)="trainingService.trainings[index]['year'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(trainingService.trainings[index]['year']) "> {{resourceService.cvresources.get('year') + resourceService.cvresources.get('notempty')}}</p>
+                            <p *ngIf="validatorService.validateMaxLengthOfTableColumn(trainingService.trainings[index]['year'], 4)">{{resourceService.cvresources.get('year') + resourceService.cvresources.get('maxLength')+ 4}}</p>
+                            <p *ngIf="validatorService.validateMinLengthOfTableColumn(trainingService.trainings[index]['year'], 4)">{{resourceService.cvresources.get('year') + resourceService.cvresources.get('minLength')+ 4}}</p>
+                        </mat-error>
+                    </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="institute">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('institute')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(trainingService.trainings[index]['institute'])">
+                <app-editable >
+                    <ng-template appViewMode> {{element.institute}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'institute', 'trainingService', 'trainings', 500,0 )" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'institute', 'trainingService', 'trainings', 500,0)"  [value]="trainingService.trainings[index]['institute']" (input)="trainingService.trainings[index]['institute'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(trainingService.trainings[index]['institute']) "> {{resourceService.cvresources.get('institute') + resourceService.cvresources.get('notempty')}}</p>
+                            <p *ngIf="validatorService.validateMaxLengthOfTableColumn(trainingService.trainings[index]['institute'], 500)">{{resourceService.cvresources.get('institute') + resourceService.cvresources.get('maxLength')+500}}</p>
+                        </mat-error>
+                    </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="training">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('training')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(trainingService.trainings[index]['training'])">
+                <app-editable >
+                    <ng-template appViewMode> {{element.training}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'training', 'trainingService', 'trainings', 500,0 )" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'training', 'trainingService', 'trainings', 500,0)"  [value]="trainingService.trainings[index]['training']" (input)="trainingService.trainings[index]['training'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(trainingService.trainings[index]['training']) "> {{resourceService.cvresources.get('training') + resourceService.cvresources.get('notempty')}}</p>
+                            <p *ngIf="validatorService.validateMaxLengthOfTableColumn(trainingService.trainings[index]['training'], 500)">{{resourceService.cvresources.get('training') + resourceService.cvresources.get('maxLength')+ 500}}</p>
+                        </mat-error>
+                    </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="removeTraining" >
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+            <td mat-cell *matCellDef="let row">
+                <button mat-icon-button class="deleteUser" (click)="trainingService.removeTrainingFromTable(row)">
+                    <mat-icon>launch</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="disable">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+            <td  mat-cell *matCellDef="let row">
+                <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="trainingService.onCheckboxChagen($event)" [checked]="trainingService.selection.isSelected(row)" [value]="trainingService.getValue(row)">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="trainingService.columnsToDisplayTraining"></tr>
+        <tr mat-row *matRowDef="let row; columns: trainingService.columnsToDisplayTraining;" class="test1"></tr>
+    </table> 
+    <p class ="table-info"  *ngIf="trainingService.trainings.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>

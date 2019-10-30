@@ -1,0 +1,124 @@
+<form class="example-form" [formGroup]="languageService.languageForm" >
+            
+        <!-- Taal -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('userLanguage')" formControlName="userLanguage">
+            <mat-error *ngIf="languageService.languageForm.controls['userLanguage'].hasError('required')">
+                {{resourceService.cvresources.get('userLanguage') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="languageService.languageForm.controls['userLanguage'].hasError('maxlength')">
+                {{resourceService.cvresources.get('userLanguage') + resourceService.cvresources.get('maxLength')+100}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Spraak -->
+        <mat-form-field>              
+            <mat-select [placeholder]="resourceService.cvresources.get('speak')" formControlName="speak">
+              <mat-option *ngFor="let level of resourceService.languageLevels" [value]="level.value">
+                {{level.viewValue}}
+              </mat-option>
+            </mat-select>
+            <mat-error>
+                {{resourceService.cvresources.get('speak') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Schrijven -->
+        <mat-form-field>              
+            <mat-select [placeholder]="resourceService.cvresources.get('write')" formControlName="write">
+              <mat-option *ngFor="let level of resourceService.languageLevels" [value]="level.value">
+                {{level.viewValue}}
+              </mat-option>
+            </mat-select>
+            <mat-error>
+                {{resourceService.cvresources.get('write') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Lezen -->
+        <mat-form-field>               
+            <mat-select [placeholder]="resourceService.cvresources.get('read')" formControlName="read">
+              <mat-option *ngFor="let level of resourceService.languageLevels" [value]="level.value">
+                {{level.viewValue}}
+              </mat-option>
+            </mat-select>
+            <mat-error>
+                {{resourceService.cvresources.get('read') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+        </mat-form-field>
+        <button class="button" mat-button (click)="languageService.addLanguageToTable()">{{resourceService.cvresources.get('add')}}</button>
+    </form>
+    
+    <!-- Talenbeheersing tabel-->
+    <table mat-table [dataSource]="languageService.dataSourceLanguage" class="mat-elevation-z8"> 
+
+        <ng-container matColumnDef="userLanguage">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('userLanguage')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" class="columnWidth" (click)="validatorService.setOriginalColumnValue(languageService.languages[index]['userLanguage'])"> 
+                <app-editable >
+                    <ng-template appViewMode> {{element.userLanguage}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'userLanguage', 'languageService', 'languages', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'userLanguage', 'languageService', 'languages', 100, 0)"  [value]="languageService.languages[index]['userLanguage']" (input)="languageService.languages[index]['userLanguage'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                        <p *ngIf="validatorService.isTableColumnEmpty(languageService.languages[index]['userLanguage']) "> {{resourceService.cvresources.get('userLanguage') + resourceService.cvresources.get('notempty')}}</p>
+                        <p *ngIf="validatorService.validateMaxLengthOfTableColumn(languageService.languages[index]['userLanguage'], 100)">{{resourceService.cvresources.get('userLanguage') + resourceService.cvresources.get('maxLength')+ 100}}</p>
+                        </mat-error>
+                    </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="speak">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('speak')}} </th>
+            <td mat-cell *matCellDef="let element">
+               <mat-select [(value)] ="element.speak" style="width: 100px;">
+                    <mat-option *ngFor="let langLevel of resourceService.languageLevels" [value]="langLevel.value">
+                        {{langLevel.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </td>    
+        </ng-container>
+        
+        <ng-container matColumnDef="write">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('write')}} </th>
+            <td mat-cell *matCellDef="let element">
+                <mat-select [(value)] ="element.write" style="width: 100px;">
+                    <mat-option *ngFor="let langLevel of resourceService.languageLevels" [value]="langLevel.value">
+                        {{langLevel.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </td>  
+        </ng-container>
+
+        <ng-container matColumnDef="read">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('read')}} </th>
+            <td mat-cell *matCellDef="let element">
+                <mat-select [(value)] ="element.read" style="width: 100px;">
+                    <mat-option *ngFor="let langLevel of resourceService.languageLevels" [value]="langLevel.value">
+                        {{langLevel.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </td>  
+        </ng-container>
+
+        <ng-container matColumnDef="removeLanguage" >
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+            <td mat-cell *matCellDef="let row">
+                <button mat-icon-button class="deleteUser" (click)="languageService.removeLanguageFromTable(row)">
+                    <mat-icon>launch</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="disable">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+            <td  mat-cell *matCellDef="let row">
+                <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="languageService.onCheckboxChagen($event)" [checked]="languageService.selection.isSelected(row)" [value]="languageService.getValue(row)">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="languageService.columnsToDisplayLanguage"></tr>
+        <tr mat-row *matRowDef="let row; columns: languageService.columnsToDisplayLanguage;" class="test1"></tr>
+    </table> 
+    <p class ="table-info"  *ngIf="languageService.languages.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>

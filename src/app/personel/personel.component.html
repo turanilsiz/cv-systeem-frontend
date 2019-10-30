@@ -1,0 +1,115 @@
+<form class="example-form" [formGroup]="personelService.personelForm">
+    <input matInput placeholder="ID" formControlName="id" [hidden]=true>
+    <!-- Gebortedatum -->
+    <mat-form-field class="example-full-width">
+        <input  matInput [matDatepicker]="pickerBirthDate" [placeholder]="resourceService.cvresources.get('birthdate')"  formControlName="birthDate" required>
+        <mat-datepicker-toggle matSuffix [for]="pickerBirthDate"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #pickerBirthDate></mat-datepicker>
+        <mat-error>
+          {{resourceService.cvresources.get('birthdate') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+    </mat-form-field> 
+    
+    <!-- Woonplaats -->
+    <mat-form-field>
+      <input matInput [placeholder]="resourceService.cvresources.get('residence')" formControlName="residence" required>
+      <mat-error>
+          {{resourceService.cvresources.get('residence') + resourceService.cvresources.get('notempty')}}
+      </mat-error>
+    </mat-form-field>
+    
+
+    <!-- Nationaliteit -->
+    <mat-form-field>
+      <input matInput [placeholder]="resourceService.cvresources.get('nationality')" formControlName="nationality" required>
+      <mat-error>
+          {{resourceService.cvresources.get('nationality') + resourceService.cvresources.get('notempty')}}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Uren beschikbaar -->
+    <mat-form-field>
+      <input matInput [placeholder]="resourceService.cvresources.get('hoursAvailabel')" formControlName="hoursAvailabel" required>
+      <mat-error>
+        {{resourceService.cvresources.get('hoursAvailabel') + resourceService.cvresources.get('notempty')}}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Huidige functie -->
+    <mat-form-field>
+      <input matInput [placeholder]="resourceService.cvresources.get('currentFunction')" formControlName="currentFunction" required>
+      <mat-error>
+        {{resourceService.cvresources.get('currentFunction') + resourceService.cvresources.get('notempty')}}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- ICT-ervaring sinds -->
+    <mat-form-field>
+      <input matInput [placeholder]="resourceService.cvresources.get('itExperienceSince')"  formControlName="itExperienceSince" required>
+      <mat-error>
+        {{resourceService.cvresources.get('itExperienceSince') + resourceService.cvresources.get('notempty')}}
+      </mat-error>
+    </mat-form-field>
+    
+    <!-- Globale profielschets -->
+    <mat-form-field class="example-textarea">
+      <textarea matInput [placeholder]="resourceService.cvresources.get('globelProfile')" formControlName="globelProfile" required (keyup)="checkLength($event.target.value, 'personelForm', 'globelProfile', 1000, 0)"></textarea>
+      <mat-error>
+        {{resourceService.cvresources.get('globelProfile') + resourceService.cvresources.get('notempty')}}
+      </mat-error>
+    </mat-form-field>
+      
+    
+</form>
+
+   <!-- Personelijke kenmerken toeveogen -->
+<form class="example-form" [formGroup]="personelService.characteristicForm">
+    <mat-form-field>
+        <input  matInput [placeholder]="resourceService.cvresources.get('characteristic')"  formControlName="characteristic" (keyup)="checkLength($event.target.value, 'characteristicForm','characteristic',250, 0)">
+        <mat-error>
+            {{resourceService.cvresources.get('characteristic') + resourceService.cvresources.get('maxLength')+ ' '+250}}
+        </mat-error>
+    </mat-form-field>
+    <button class="button" mat-button (click)="personelService.addCharacteristicToTable()">{{resourceService.cvresources.get('add')}}</button>
+</form>
+
+<!-- Persoonlijke kenmerken Tabel -->
+<table mat-table [dataSource]="personelService.dataSourceCharacteristic" class="mat-elevation-z8">
+    <ng-container matColumnDef="characteristic" class="columnWidth" >
+        <th mat-header-cell *matHeaderCellDef class="columnWidth"> {{resourceService.cvresources.get('characteristic')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" class="columnWidth" (click)="validatorService.setOriginalColumnValue(personelService.characteristics[index]['characteristic'])"> 
+          <app-editable >
+             <ng-template appViewMode> {{element.characteristic}} </ng-template>
+             <ng-template appEditMode >
+                 <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'characteristic', 'personelService', 'characteristics', 250, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'characteristic', 'personelService', 'characteristics', 250, 0)"  [value]="personelService.characteristics[index]['characteristic']" (input)="personelService.characteristics[index]['characteristic'] =  $event.target.value"  appFocusable appEditOnEnter>
+                 <mat-error >
+                  <p *ngIf="validatorService.isTableColumnEmpty(personelService.characteristics[index]['characteristic']) "> {{resourceService.cvresources.get('characteristic') + resourceService.cvresources.get('notempty')}}</p>
+                  <p *ngIf="validatorService.validateMaxLengthOfTableColumn(personelService.characteristics[index]['characteristic'], 250)">{{resourceService.cvresources.get('characteristic') + resourceService.cvresources.get('maxLength')+ ' '+250}}</p>
+                </mat-error>
+                </ng-template>
+          </app-editable>  
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="removeCharacteristic">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+        <td mat-cell *matCellDef="let row">
+            <button mat-icon-button class="deleteUser" (click)="personelService.removeCharacteristicFromTable(row)">
+                <mat-icon>launch</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="disable">
+      <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+      <td  mat-cell *matCellDef="let row">
+          <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="personelService.onCheckboxChagen($event)" [checked]="personelService.selection.isSelected(row)" [value]="personelService.getValue(row)">
+          </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="personelService.columnsToDisplayCharacteristic"></tr>
+    <tr mat-row *matRowDef="let row; columns: personelService.columnsToDisplayCharacteristic;" class="test1"></tr>
+</table>
+<p class ="table-info"  *ngIf="personelService.characteristics.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+

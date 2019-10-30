@@ -1,0 +1,212 @@
+
+<form class="example-form" [formGroup]="projectService.projectForm">
+<!-- Begindatum -->
+    <mat-form-field class="example-full-width">
+            <input matInput [matDatepicker]="picker5" [placeholder]="resourceService.cvresources.get('startDate')" formControlName="startDate" required>
+            <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+            <mat-datepicker #picker5></mat-datepicker>
+            <mat-error>
+                {{resourceService.cvresources.get('startDate') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+    </mat-form-field> 
+    
+    <!-- Einddatum  -->
+    <mat-form-field class="example-full-width">
+        <input matInput [matDatepicker]="picker6" [placeholder]="resourceService.cvresources.get('endDate')" formControlName="endDate" >
+        <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+        <mat-datepicker #picker6></mat-datepicker>
+        <mat-error>
+            {{resourceService.cvresources.get('endDate') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+    </mat-form-field>
+    
+    <!-- Opdracht -->
+    <mat-form-field>
+        <input matInput [placeholder]="resourceService.cvresources.get('projectName')" formControlName="projectName" required>
+        <mat-error *ngIf="projectService.projectForm.controls['projectName'].hasError('required')">
+            {{resourceService.cvresources.get('projectName') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+        <mat-error *ngIf="projectService.projectForm.controls['projectName'].hasError('maxlength')">
+            {{resourceService.cvresources.get('projectName') + resourceService.cvresources.get('maxLength')+500}}
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Opdrachtgever -->
+    <mat-form-field>
+        <input matInput [placeholder]="resourceService.cvresources.get('client')" formControlName="client" required>
+        <mat-error *ngIf="projectService.projectForm.controls['client'].hasError('required')">
+            {{resourceService.cvresources.get('client') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+        <mat-error *ngIf="projectService.projectForm.controls['client'].hasError('maxlength')">
+            {{resourceService.cvresources.get('client') + resourceService.cvresources.get('maxLength')+500}}
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Rol -->
+    <mat-form-field>
+        <input matInput [placeholder]="resourceService.cvresources.get('role')" formControlName="role" required>
+        <mat-error *ngIf="projectService.projectForm.controls['role'].hasError('required')">
+            {{resourceService.cvresources.get('role') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+        <mat-error *ngIf="projectService.projectForm.controls['role'].hasError('maxlength')">
+            {{resourceService.cvresources.get('role') + resourceService.cvresources.get('maxLength')+500}}
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Activiteit -->
+    <mat-form-field>
+        <input matInput [placeholder]="resourceService.cvresources.get('activity')" formControlName="activity" required>
+        <mat-error *ngIf="projectService.projectForm.controls['activity'].hasError('required')">
+            {{resourceService.cvresources.get('activity') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+        <mat-error *ngIf="projectService.projectForm.controls['activity'].hasError('maxlength')">
+            {{resourceService.cvresources.get('activity') + resourceService.cvresources.get('maxLength')+2000}}
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Tools -->
+    <mat-form-field>
+        <input matInput [placeholder]="resourceService.cvresources.get('tools')" formControlName="tools" required>
+        <mat-error *ngIf="projectService.projectForm.controls['tools'].hasError('required')">
+            {{resourceService.cvresources.get('tools') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+        <mat-error *ngIf="projectService.projectForm.controls['tools'].hasError('maxlength')">
+            {{resourceService.cvresources.get('tools') + resourceService.cvresources.get('maxLength')+2000}}
+        </mat-error>
+    </mat-form-field>
+    <button class="button" mat-button (click)="projectService.addProjectToTable()">{{resourceService.cvresources.get('add')}}</button>
+    
+</form>
+
+<!-- Projectervaring tabel -->
+<table mat-table [dataSource]="projectService.dataSourceProject" class="mat-elevation-z8"> 
+
+    <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('startDate')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(projectService.projects[index]['startDate'])">
+            <app-editable >
+                <ng-template appViewMode> {{element.startDate | date: 'dd/MM/yyyy'}} </ng-template>
+                <ng-template appEditMode >
+                    <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'startDate', 'projectService', 'projects', 6, 6 )" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'startDate', 'projectService', 'projects',6, 6 )"  [value]="projectService.projects[index]['startDate']" (input)="projectService.projects[index]['startDate'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    <mat-error >
+                        <p *ngIf="validatorService.isTableColumnEmpty(projectService.projects[index]['startDate']) "> {{resourceService.cvresources.get('startDate') + resourceService.cvresources.get('notempty')}}</p>
+                    </mat-error>
+                </ng-template>
+            </app-editable>  
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('endDate')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(projectService.projects[index]['endDate'])">
+            <app-editable >
+                <ng-template appViewMode> {{element.endDate | date: 'dd/MM/yyyy'}} </ng-template>
+                <ng-template appEditMode >
+                    <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'endDate', 'projectService', 'projects',6,6)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'endDate', 'projectService', 'projects',6,6)"  [value]="projectService.projects[index]['endDate']" (input)="projectService.projects[index]['endDate'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    
+                </ng-template>
+            </app-editable>  
+        </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="projectName">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('projectName')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(projectService.projects[index]['projectName'])">
+            <app-editable >
+                <ng-template appViewMode> {{element.projectName}} </ng-template>
+                <ng-template appEditMode >
+                    <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'projectName', 'projectService', 'projects', 500, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'projectName', 'projectService', 'projects', 500, 0)"  [value]="projectService.projects[index]['projectName']" (input)="projectService.projects[index]['projectName'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    <mat-error >
+                        <p *ngIf="validatorService.isTableColumnEmpty(projectService.projects[index]['projectName']) "> {{resourceService.cvresources.get('projectName') + resourceService.cvresources.get('notempty')}}</p>
+                        <p *ngIf="validatorService.validateMaxLengthOfTableColumn(projectService.projects[index]['projectName'], 500)">{{resourceService.cvresources.get('projectName') + resourceService.cvresources.get('maxLength')+ 500}}</p>
+                    </mat-error>
+                </ng-template>
+            </app-editable>  
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="client">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('client')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(projectService.projects[index]['client'])">
+            <app-editable >
+                <ng-template appViewMode> {{element.client}} </ng-template>
+                <ng-template appEditMode >
+                    <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'client', 'projectService', 'projects', 500, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'client', 'projectService', 'projects', 500, 0)"  [value]="projectService.projects[index]['client']" (input)="projectService.projects[index]['client'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    <mat-error >
+                        <p *ngIf="validatorService.isTableColumnEmpty(projectService.projects[index]['client']) "> {{resourceService.cvresources.get('client') + resourceService.cvresources.get('notempty')}}</p>
+                        <p *ngIf="validatorService.validateMaxLengthOfTableColumn(projectService.projects[index]['client'], 500)">{{resourceService.cvresources.get('client') + resourceService.cvresources.get('maxLength')+ 500}}</p>
+                    </mat-error>
+                </ng-template>
+            </app-editable>  
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('role')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(projectService.projects[index]['role'])">
+            <app-editable >
+                <ng-template appViewMode> {{element.role}} </ng-template>
+                <ng-template appEditMode >
+                    <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'role', 'projectService', 'projects', 500, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'role', 'projectService', 'projects', 500, 0)"  [value]="projectService.projects[index]['role']" (input)="projectService.projects[index]['role'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    <mat-error >
+                        <p *ngIf="validatorService.isTableColumnEmpty(projectService.projects[index]['role']) "> {{resourceService.cvresources.get('role') + resourceService.cvresources.get('notempty')}}</p>
+                        <p *ngIf="validatorService.validateMaxLengthOfTableColumn(projectService.projects[index]['role'], 500)">{{resourceService.cvresources.get('role') + resourceService.cvresources.get('maxLength')+500}}</p>
+                    </mat-error>
+                </ng-template>
+            </app-editable>  
+        </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="activity">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('activity')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(projectService.projects[index]['activity'])">
+            <app-editable >
+                <ng-template appViewMode> {{element.activity}} </ng-template>
+                <ng-template appEditMode >
+                    <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'activity', 'projectService', 'projects', 2000, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'activity', 'projectService', 'projects', 2000, 0)"  [value]="projectService.projects[index]['activity']" (input)="projectService.projects[index]['activity'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    <mat-error >
+                        <p *ngIf="validatorService.isTableColumnEmpty(projectService.projects[index]['activity']) "> {{resourceService.cvresources.get('activity') + resourceService.cvresources.get('notempty')}}</p>
+                        <p *ngIf="validatorService.validateMaxLengthOfTableColumn(projectService.projects[index]['activity'], 2000)">{{resourceService.cvresources.get('activity') + resourceService.cvresources.get('maxLength')+2000}}</p>
+                    </mat-error>
+                </ng-template>
+            </app-editable>  
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tools">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('tools')}} </th>
+        <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(projectService.projects[index]['tools'])">
+            <app-editable >
+                <ng-template appViewMode> {{element.tools}} </ng-template>
+                <ng-template appEditMode >
+                    <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'tools', 'projectService', 'projects', 2000, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'tools', 'projectService', 'projects', 2000, 0)"  [value]="projectService.projects[index]['tools']" (input)="projectService.projects[index]['tools'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    <mat-error >
+                        <p *ngIf="validatorService.isTableColumnEmpty(projectService.projects[index]['tools']) "> {{resourceService.cvresources.get('tools') + resourceService.cvresources.get('notempty')}}</p>
+                        <p *ngIf="validatorService.validateMaxLengthOfTableColumn(projectService.projects[index]['tools'], 2000)">{{resourceService.cvresources.get('tools') + resourceService.cvresources.get('maxLength')+ 2000}}</p>
+                    </mat-error>
+                </ng-template>
+            </app-editable>  
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="removeProject" >
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+        <td mat-cell *matCellDef="let row">
+            <button mat-icon-button class="deleteUser" (click)="projectService.removeProjectFromTable(row)">
+                <mat-icon>launch</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="disable">
+        <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+        <td  mat-cell *matCellDef="let row">
+            <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="projectService.onCheckboxChagen($event)" [checked]="projectService.selection.isSelected(row)" [value]="projectService.getValue(row)">
+            </mat-checkbox>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="projectService.columnsToDisplayProject"></tr>
+    <tr mat-row *matRowDef="let row; columns: projectService.columnsToDisplayProject;" class="test1"></tr>
+</table>
+<p class ="table-info"  *ngIf="projectService.projects.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>

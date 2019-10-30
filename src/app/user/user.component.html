@@ -1,0 +1,74 @@
+
+<mat-sidenav-container class="example-container" >
+
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
+                 (closed)="events.push('close!')">
+                 <button *ngIf="userService.isAdmin()" mat-raised-button class="addUser" (click)="createDialog()"> Voeg Gebruiker toe </button>
+             
+         <mat-form-field>
+             <input matInput (keyup)="applyFilter($event.target.value, $event.keyCode)" placeholder="Filter met Naam">
+         </mat-form-field>
+     
+         <table mat-table [dataSource]="userService.users" class="mat-elevation-z8">
+ 
+             <!-- Id Column -->
+             <ng-container matColumnDef="id" >
+                     <th mat-header-cell *matHeaderCellDef [hidden]="true"> ID </th>           
+                     <td mat-cell *matCellDef="let element" [hidden]="true"> {{element.id}} </td>   
+             </ng-container>
+             
+              <!-- Naam Column -->
+             <ng-container matColumnDef="firstName">
+                 <th mat-header-cell *matHeaderCellDef style="width: 120px;"> Naam </th>
+               <!--  <td mat-cell *matCellDef="let element"> {{element.firstName + ' '+element.lastName}} </td>-->
+                 <td mat-cell *matCellDef="let element" > {{createUserName(element.firstName, element.insertion, element.lastName)}} </td>
+             </ng-container>
+             
+             <!-- Achternaam Column -->
+             <ng-container matColumnDef="lastName">
+                 <th mat-header-cell *matHeaderCellDef [hidden]="true"> Achternaam </th>
+                 <td mat-cell *matCellDef="let element" [hidden]="true"> {{element.lastName}} </td>
+             </ng-container>
+
+              <!-- CV latest update -->
+              <ng-container matColumnDef="latestCVupdate">
+                <th mat-header-cell *matHeaderCellDef style="width: 120px;"> Latest CV Update </th>
+                <td mat-cell *matCellDef="let element" > {{element.latestCVupdate | date }} </td>
+            </ng-container>
+
+            <!-- CV latest update BY -->
+            <ng-container matColumnDef="cvupdatedBy">
+                <th mat-header-cell *matHeaderCellDef style="width: 120px;"> Updated Door </th>
+                <td mat-cell *matCellDef="let element" > {{element.cvupdatedBy}} </td>
+            </ng-container>
+ 
+             <ng-container matColumnDef="deleteUser" >
+                 <th mat-header-cell *matHeaderCellDef style="width: 50px;"> Verwijder gebruiker </th>
+                 <td mat-cell *matCellDef="let row">
+                     <button *ngIf="userService.isAdmin()" mat-icon-button class="deleteUser" (click)="deleteUser(row)">
+                         <mat-icon>launch</mat-icon>
+                     </button>
+                 </td>
+             </ng-container>
+ 
+             <ng-container matColumnDef="showCV">
+                     <th mat-header-cell *matHeaderCellDef [hidden]="usercvService.hideCVcolumn" style="padding-left: 10px;"> CV </th>
+                     <td mat-cell *matCellDef="let row" [hidden]="usercvService.hideCVcolumn">
+                         <button *ngIf="row.role == 'USER'"  mat-icon-button class="showCV" (click)="showCVOfSelectedUser(row)">
+                             <mat-icon >launch</mat-icon>
+                         </button>
+                     </td>
+                 </ng-container>
+                 
+             <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+             <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" class="test1"></tr>
+         </table>
+    </mat-sidenav>
+  
+    <mat-sidenav-content>
+      <p style="padding-left:5%" *ngIf="usercvService.selectedLanguage"><mat-checkbox [(ngModel)]="opened">Toon Gebruiker</mat-checkbox></p>
+      <!--<p><button mat-button (click)="sidenav.toggle()">sidenav.toggle()</button></p>-->
+      <p style="padding-left:5%" *ngIf="userService.nameOfSelectedUser">Gekozen  Gebruiker: <strong>{{userService.nameOfSelectedUser}}</strong></p>
+      <app-user-cv></app-user-cv>
+    </mat-sidenav-content>
+  </mat-sidenav-container>

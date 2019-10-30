@@ -1,0 +1,114 @@
+<form class="example-form" [formGroup]="certificateService.certificateForm">
+        <ng-template matStepLabel>{{resourceService.cvresources.get('certificates')}}</ng-template>
+
+        <!-- Jaar -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('year')" formControlName="year" required>
+            <mat-error *ngIf="certificateService.certificateForm.controls['year'].hasError('required')">
+                {{resourceService.cvresources.get('year') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="certificateService.certificateForm.controls['year'].hasError('maxlength')">
+                {{resourceService.cvresources.get('year') + resourceService.cvresources.get('maxLength')+4}}
+            </mat-error>
+            <mat-error *ngIf="certificateService.certificateForm.controls['year'].hasError('minlength')">
+                {{resourceService.cvresources.get('year') + resourceService.cvresources.get('minLength')+4}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Instituut -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('institute')" formControlName="institute" required>
+            <mat-error *ngIf="certificateService.certificateForm.controls['institute'].hasError('required')">
+                {{resourceService.cvresources.get('institute') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="certificateService.certificateForm.controls['institute'].hasError('maxlength')">
+                {{resourceService.cvresources.get('institute') + resourceService.cvresources.get('maxLength')+500}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Certificaat -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('certificate')" formControlName="certificate" required>
+            <mat-error *ngIf="certificateService.certificateForm.controls['certificate'].hasError('required')">
+                {{resourceService.cvresources.get('certificate') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="certificateService.certificateForm.controls['certificate'].hasError('maxlength')">
+                {{resourceService.cvresources.get('certificate') + resourceService.cvresources.get('maxLength')+500}}
+            </mat-error>
+        </mat-form-field>   
+        <button class="button" mat-button (click)="certificateService.addCertificateToTable()">{{resourceService.cvresources.get('add')}}</button>  
+    </form>
+
+    <!--  Certificaat tabel-->
+    <table mat-table [dataSource]="certificateService.dataSourceCertificate" class="mat-elevation-z8"> 
+
+        <ng-container matColumnDef="year">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('year')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(certificateService.certificates[index]['year'])"> 
+                <app-editable >
+                    <ng-template appViewMode> {{element.year}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'year', 'certificateService', 'certificates', 4,4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'year', 'certificateService', 'certificates', 4, 4)"  [value]="certificateService.certificates[index]['year']" (input)="certificateService.certificates[index]['year'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(certificateService.certificates[index]['year']) "> {{resourceService.cvresources.get('year') + resourceService.cvresources.get('notempty')}}</p>
+                            <p *ngIf="validatorService.validateMaxLengthOfTableColumn(certificateService.certificates[index]['year'], 4)">{{resourceService.cvresources.get('year') + resourceService.cvresources.get('maxLength')+ 4}}</p>
+                            <p *ngIf="validatorService.validateMinLengthOfTableColumn(certificateService.certificates[index]['year'], 4)">{{resourceService.cvresources.get('year') + resourceService.cvresources.get('minLength')+ 4}}</p>
+                        </mat-error>
+                        </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="institute">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('institute')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(certificateService.certificates[index]['institute'])"> 
+                <app-editable >
+                    <ng-template appViewMode> {{element.institute}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'institute', 'certificateService', 'certificates', 500, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'institute', 'certificateService', 'certificates', 500, 0)"  [value]="certificateService.certificates[index]['institute']" (input)="certificateService.certificates[index]['institute'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(certificateService.certificates[index]['institute']) "> {{resourceService.cvresources.get('institute') + resourceService.cvresources.get('notempty')}}</p>
+                            <p *ngIf="validatorService.validateMaxLengthOfTableColumn(certificateService.certificates[index]['institute'], 500)">{{resourceService.cvresources.get('institute') + resourceService.cvresources.get('maxLength')+500}}</p>
+                        </mat-error>
+                        </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="certificate">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('certificate')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(certificateService.certificates[index]['certificate'])"> 
+                <app-editable >
+                    <ng-template appViewMode> {{element.certificate}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'certificate', 'certificateService', 'certificates', 500, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'certificate', 'certificateService', 'certificates', 500,0)"  [value]="certificateService.certificates[index]['certificate']" (input)="certificateService.certificates[index]['certificate'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(certificateService.certificates[index]['certificate']) "> {{resourceService.cvresources.get('certificate') + resourceService.cvresources.get('notempty')}}</p>
+                            <p *ngIf="validatorService.validateMaxLengthOfTableColumn(certificateService.certificates[index]['certificate'], 500)">{{resourceService.cvresources.get('certificate') + resourceService.cvresources.get('maxLength')+ 500}}</p>
+                        </mat-error>
+                        </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="removeCertificate" >
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+            <td mat-cell *matCellDef="let row">
+                <button mat-icon-button class="deleteUser" (click)="certificateService.removeCerticateFromTable(row)">
+                    <mat-icon>launch</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="disable">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+            <td  mat-cell *matCellDef="let row">
+                <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="certificateService.onCheckboxChagen($event)" [checked]="certificateService.selection.isSelected(row)" [value]="certificateService.getValue(row)">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="certificateService.columnsToDisplayCertificate"></tr>
+        <tr mat-row *matRowDef="let row; columns: certificateService.columnsToDisplayCertificate;" class="test1"></tr>
+    </table> 
+    <p class ="table-info"  *ngIf="certificateService.certificates.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>

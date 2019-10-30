@@ -1,0 +1,19 @@
+.navbar{
+    justify-content: space-between;
+    background-color: red;
+    
+}
+span{
+    padding: 1rem;
+}
+a{
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+}
+a:hover{
+    color:white;
+}
+.active{
+    color: white;
+}

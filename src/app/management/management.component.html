@@ -1,0 +1,57 @@
+<mat-card class="example-card" *ngIf="!userService.isAdmin()">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title style="font-size: 15px">Photo</mat-card-title>
+   <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
+  </mat-card-header>
+    <img *ngIf="managementService.userPhoto" mat-card-image class="e2e-inner-html-interpolated" [src]="managementService.userPhoto" style="height: 200px; width: 300px">
+    <img *ngIf="managementService.userPhoto == null"  mat-card-image class="e2e-inner-html-interpolated" src="/assets/images/noimages.jpg" style="height: 200px; width: fit-content">
+  
+  <mat-card-actions>
+    <input   type="file" accept="image/*" (change)="onFileSelected($event)" >
+  </mat-card-actions>
+</mat-card>
+
+<form class="login-form" [formGroup]="managementService.managementForm" >  
+    <mat-form-field>
+      <input matInput placeholder="Gebruiker naam" formControlName="userName" (keyup)="checkUsername($event.target.value)">
+      <mat-error>       
+        {{managementErrorMessage('Gebruiker naam','userName')}}  
+     </mat-error>
+    </mat-form-field>
+  
+    <mat-form-field>
+        <input matInput placeholder="Wachtwoord" [type]="hide ? 'password' : 'text'" formControlName="password">
+        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Academische titel" formControlName="acedemicTitle">
+    </mat-form-field>
+    
+    <mat-form-field>
+      <input matInput placeholder="Initiaal" formControlName="initial">
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Voornaam" formControlName="firstName">
+        <mat-error>
+          {{managementErrorMessage('Voornaam','firstName')}}     
+       </mat-error>
+    </mat-form-field>
+     
+    <mat-form-field>
+      <input matInput placeholder="Tussenvoegsel" formControlName="insertion">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Achternaam" formControlName="lastName">
+      <mat-error>
+        {{managementErrorMessage('Achternaam','lastName')}}     
+     </mat-error>
+    </mat-form-field>
+    
+    <button mat-button class="submit-button" (click)="updateUser()">Verzenden</button>
+</form>

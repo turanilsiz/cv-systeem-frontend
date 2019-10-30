@@ -1,0 +1,84 @@
+<h3>Voeg gebruiker toe</h3>
+
+<button class="btn-dialog-cloese" (click)="closeDiolog()" tabindex="-1">
+    <mat-icon>clear</mat-icon>
+</button>
+
+<form class="example-form" [formGroup]="userService.userForm" >
+     <input id="idHidden" matInput placeholder="Id" formControlName="id" [hidden]="true"> 
+
+    
+    <mat-form-field class="example-full-width">
+        <input matInput placeholder="Gebruiker naam" formControlName="userName" (keyup)="checkUsername($event.target.value)">
+        <mat-error>           
+            {{addUserErrorMessage('Gebruiker naam', 'userName')}}          
+        </mat-error>
+  
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput placeholder="Wachtwoord" formControlName="password">
+        <mat-error>
+          {{addUserErrorMessage('Wachtwoord', 'password')}}
+        </mat-error>
+    </mat-form-field>
+    
+    <mat-form-field class="example-full-width">
+        <input matInput placeholder="Voornaam" formControlName="firstName">
+        <mat-error>
+          {{addUserErrorMessage('Voornaam', 'firstName')}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Tussenvoegsel" formControlName="insertion">
+   </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput placeholder="Achternaam" formControlName="lastName">
+        <mat-error>
+          {{addUserErrorMessage('Achternaam', 'lastName')}}
+        </mat-error>
+    </mat-form-field>
+
+
+    
+
+    <mat-form-field class="example-full-width">
+            <input matInput [matDatepicker]="picker" formControlName="startDate" placeholder="Begin Datum">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error>
+              {{addUserErrorMessage('Begin Datum', 'startDate')}}
+            </mat-error>
+     </mat-form-field>
+  
+
+     <mat-form-field class="example-full-width">
+        <mat-select placeholder="Role" formControlName="role">
+          <mat-option *ngFor="let role of roles"  [value]="role.value">
+            {{role.viewValue}}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          {{addUserErrorMessage('Role', 'role')}}
+        </mat-error>
+      </mat-form-field> 
+
+      <mat-form-field class="example-full-width">
+      <mat-select placeholder="Actief" formControlName="active">
+        <mat-option *ngFor="let act of active" [value]="act.value">
+          {{act.viewValue}}
+        </mat-option>
+      </mat-select>
+      <mat-error>
+        {{addUserErrorMessage('Actief', 'active')}}
+      </mat-error>
+    </mat-form-field>
+
+   <!--   <input  type="file" (change)="onFileSelected($event)" > -->
+  <div class ="formButton">
+    <button class="button" type="submit" (click)= "onSubmit()">Submit</button>
+    <button id="resetButton" class="button" (click)="onClear()">Reset Form</button>
+  </div>
+  </form>

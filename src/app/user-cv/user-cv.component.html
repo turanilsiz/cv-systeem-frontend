@@ -1,0 +1,113 @@
+  
+  
+  <h3 *ngIf="!usercvService.selectedLanguage">Om CV te zien kies taal</h3>
+  <mat-form-field class="select-cv-language">
+    <mat-label>Kies Taal</mat-label>
+    <mat-select [(ngModel)]="usercvService.selectedLanguage" (selectionChange)="selectCvLanguage()">
+      <mat-option *ngFor="let lng of cvLanguages" [value]="lng.value">
+        {{lng.viewValue}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+ 
+
+  <mat-vertical-stepper *ngIf="usercvService.selectedLanguage"  #stepper>
+ 
+
+    <!-- Persoonlijke Gegevens -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('personelInfo')}}</ng-template>
+        <div class="cv-user-photo" >
+          <img *ngIf="usercvService.photoOfSelectedUser" mat-card-image class="e2e-inner-html-interpolated" [src]="usercvService.photoOfSelectedUser" style="height: 100px; width: 150px">
+          <img *ngIf="usercvService.photoOfSelectedUser == null"  mat-card-image class="e2e-inner-html-interpolated" src="/assets/images/noimages.jpg" style="height: 100px; width: 150px">
+          <p *ngIf="usercvService.photoOfSelectedUser"><mat-checkbox (click)="usercvService.setVisibilityOfUserPhotoInCv()">{{resourceService.cvresources.get('cv-without-photo')}}</mat-checkbox></p>
+        </div>
+        <app-personel></app-personel>
+        <div>
+          <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>
+    </mat-step>
+    
+    <!-- EXPERTISE -->
+    <mat-step>
+       <ng-template matStepLabel>Expertise</ng-template>
+       <app-expertise></app-expertise>
+       <div>
+          <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+          <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+       </div>
+    </mat-step>
+
+    <!-- Opleidingen -->
+    <mat-step>
+      <ng-template matStepLabel>{{resourceService.cvresources.get('educations')}}</ng-template>  
+      <app-education></app-education>
+      <div>
+          <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+          <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+      </div>
+    </mat-step>
+
+    <!-- Trainingen -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('trainings')}}</ng-template>
+        <app-training></app-training>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>
+    </mat-step>
+
+    <!-- Certificaten -->
+    <mat-step>
+        <app-certificate></app-certificate>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('certificates')}}</ng-template>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>
+    </mat-step>      
+    
+    <!-- Talenbeheersing -->
+    <mat-step>
+        <app-language></app-language>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('languageProficiency')}}</ng-template>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>
+    </mat-step>   
+
+    <!-- Werkervaring -->
+    <mat-step>
+        <app-work></app-work>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('workExperince')}}</ng-template>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>
+    </mat-step>    
+
+    <!-- Projectervaring -->
+    <mat-step>
+        <app-project></app-project>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('projectExperience')}}</ng-template>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>
+    </mat-step>    
+
+    
+    <mat-step>
+      <ng-template matStepLabel>{{resourceService.cvresources.get('done')}}</ng-template>
+         {{resourceService.cvresources.get('donecv')}}
+      <div>
+        <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+        <button *ngIf="userServcice.nameOfSelectedUser" class="button" mat-button (click)="save()">{{resourceService.cvresources.get('send')}}</button>
+        <button *ngIf="userServcice.nameOfSelectedUser" class="button" mat-button (click)="downloadPDF()">Download CV (PDF)</button>
+        <button *ngIf="userServcice.nameOfSelectedUser" class="button" mat-button (click)="downloadWord()">Download CV (Word)</button>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
+  

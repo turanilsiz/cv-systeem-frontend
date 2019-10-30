@@ -1,0 +1,131 @@
+<form class="example-form" [formGroup]="workService.workExperienceForm">
+            
+            
+        <!-- Begindatum  -->
+        <mat-form-field class="example-full-width">
+            <input matInput [matDatepicker]="picker3" [placeholder]="resourceService.cvresources.get('startDate')" formControlName="startDate" required>
+            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+            <mat-datepicker #picker3></mat-datepicker>
+            <mat-error>
+                {{resourceService.cvresources.get('startDate') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Einddatum -->
+        <mat-form-field class="example-full-width">
+            <input matInput [matDatepicker]="picker4" [placeholder]="resourceService.cvresources.get('endDate')" formControlName="endDate" >
+            <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+            <mat-datepicker #picker4></mat-datepicker>
+            <mat-error>
+                {{resourceService.cvresources.get('endDate') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+        </mat-form-field> 
+        
+        <!-- Functie -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('function')" formControlName="function" required>
+            <mat-error *ngIf="workService.workExperienceForm.controls['function'].hasError('required')">
+                {{resourceService.cvresources.get('function') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="workService.workExperienceForm.controls['function'].hasError('maxlength')">
+                {{resourceService.cvresources.get('function') + resourceService.cvresources.get('maxLength')+500}}
+            </mat-error>
+        </mat-form-field>
+        
+        <!-- Organisatie -->
+        <mat-form-field>
+            <input matInput [placeholder]="resourceService.cvresources.get('company')" formControlName="company" required>
+            <mat-error *ngIf="workService.workExperienceForm.controls['company'].hasError('required')">
+                {{resourceService.cvresources.get('company') + resourceService.cvresources.get('notempty')}}
+            </mat-error>
+            <mat-error *ngIf="workService.workExperienceForm.controls['company'].hasError('maxlength')">
+                {{resourceService.cvresources.get('company') + resourceService.cvresources.get('maxLength')+500}}
+            </mat-error>
+        </mat-form-field>
+        <button class="button" mat-button (click)="workService.addWorkTable()">{{resourceService.cvresources.get('add')}}</button>
+        
+    </form>
+     
+    <!-- Werkervaring tabel -->
+    <table mat-table [dataSource]="workService.dataSourceWork" class="mat-elevation-z8"> 
+
+        <ng-container matColumnDef="startDate">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('startDate')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(workService.works[index]['startDate'])">
+                <app-editable >
+                    <ng-template appViewMode> {{element.startDate | date: 'dd/MM/yyyy'}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'startDate', 'workService', 'works',6,6)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'startDate', 'workService', 'works',6,6)"  [value]="workService.works[index]['startDate']" (input)="workService.works[index]['startDate'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(workService.works[index]['startDate']) "> {{resourceService.cvresources.get('startDate') + resourceService.cvresources.get('notempty')}}</p>
+                        </mat-error>
+                    </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="endDate">
+            <th mat-header-cell *matHeaderCellDef> Eindd{{resourceService.cvresources.get('endDate')}}atum </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(workService.works[index]['endDate'])">
+                <app-editable >
+                    <ng-template appViewMode> {{element.endDate | date: 'dd/MM/yyyy'}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'endDate', 'workService', 'works',6,6)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'endDate', 'workService', 'works', 6, 6)"  [value]="workService.works[index]['endDate']" (input)="workService.works[index]['endDate'] =  $event.target.value"  appFocusable appEditOnEnter>
+                    </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="function">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('function')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(workService.works[index]['function'])">
+                <app-editable >
+                    <ng-template appViewMode> {{element.function}} </ng-template>
+                    <ng-template appEditMode >
+                        <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'function', 'workService', 'works', 500, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'function', 'workService', 'works', 500, 0 )"  [value]="workService.works[index]['function']" (input)="workService.works[index]['function'] =  $event.target.value"  appFocusable appEditOnEnter>
+                        <mat-error >
+                            <p *ngIf="validatorService.isTableColumnEmpty(workService.works[index]['function']) "> {{resourceService.cvresources.get('function') + resourceService.cvresources.get('notempty')}}</p>
+                            <p *ngIf="validatorService.validateMaxLengthOfTableColumn(workService.works[index]['function'], 500) "> {{resourceService.cvresources.get('function') + resourceService.cvresources.get('maxLength')+500}}</p>
+                        </mat-error>
+                    </ng-template>
+                </app-editable>  
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="company">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('company')}} </th>
+            <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(workService.works[index]['company'])">
+                    <app-editable >
+                        <ng-template appViewMode> {{element.company}} </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'company', 'workService', 'works', 500, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'company', 'workService', 'works', 500, 0)"  [value]="workService.works[index]['company']" (input)="workService.works[index]['company'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(workService.works[index]['company']) "> {{resourceService.cvresources.get('company') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(workService.works[index]['company'], 500) "> {{resourceService.cvresources.get('company') + resourceService.cvresources.get('maxLength')+ 500}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>  
+                </td>
+        </ng-container>
+
+        <ng-container matColumnDef="removeWork" >
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+            <td mat-cell *matCellDef="let row">
+                <button mat-icon-button class="deleteUser" (click)="workService.removeWorkFromTable(row)">
+                    <mat-icon>launch</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="disable">
+            <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+            <td  mat-cell *matCellDef="let row">
+                <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="workService.onCheckboxChagen($event)" [checked]="workService.selection.isSelected(row)" [value]="workService.getValue(row)">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="workService.columnsToDisplayWork"></tr>
+        <tr mat-row *matRowDef="let row; columns: workService.columnsToDisplayWork;" class="test1"></tr>
+    </table> 
+    <p class ="table-info"  *ngIf="workService.works.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>

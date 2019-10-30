@@ -1,0 +1,38 @@
+
+   
+        
+    
+    
+    {
+    "name"                : "Naam",
+    "birthDate"           : "Geboortedatum",
+    "residence"           : "Woonplaats",
+    "nationality"         : "Nationaliteit",
+    "hoursAvailabel"      : "Uren beschikbaar",
+    "currentFunction"     : "Huidige functie",
+    "itExperienceSince"   : "ICT-ervaring sinds",
+    "globelProfile"       : "GLOBALE PROFIELSCHETS ",
+    "colon"               : ":",
+    "footerText1"         : "All services by or on behalf of GEOS IT Professionals B.V. (Chamber of Commerce number:27165417) are subject to its Algemene Voorwaarden (General Terms and Conditions), ",
+    "footerText2"         : "which will be forwarded upon request.",
+    "page"                : "page ",
+    "personelInfoTitle"   : "PERSONLIJKE GEGEVENS",
+    "globelProfTitle"     : "GLOBALE PROFIELSCHETS" ,
+    "educationAndTrainig" : "OPLEIDINGEN EN TRAININGEN",
+    "certificates"        : "CERTIFICATEN",
+    "languageTitle"       : "TALENBEHEERSING",
+    "language"            : "Taal",
+    "speak"               : "Spraak",
+    "write"               : "Schrijven",
+    "read"                : "Lezen",
+    "workExperinceTitle"  : "WERKERVARING",
+    "projectExperince"    : "PROJECTERVARING" ,
+    "period"              : "Periode",
+    "projectName"         : "Opdracht",
+    "client"              : "Opdrachtgever",
+    "role"                : "Rol",
+    "activity"            : "Activiteit ",
+    "tools"               : "Tools" 
+ 
+    }
+    

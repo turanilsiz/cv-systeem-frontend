@@ -1,0 +1,22 @@
+
+<mat-toolbar class="navbar">
+    <mat-toolbar-row>
+            <div style="text-align:center; background-color: red; position: absolute; width: 100%;" >
+                    <img width="100" alt="Angular Logo" src="assets/images/dpalogo.png" style="margin-top:20px;">
+                    <h1 style="margin-top: -1%; padding-top:10px; color:white; font-size: 30px">
+                      {{ title }}
+                    </h1> 
+                  </div>
+    </mat-toolbar-row>
+    <mat-toolbar-row class="navbar">      
+        <div>      
+            <a *ngFor ="let route of routes"  [routerLink]="route.url" routerLinkActive="active">
+                <span>{{route.linkName}}</span>
+            </a>         
+        </div>
+        <div>
+            <a *ngIf="loginService.authenticated" routerLink="/logout" routerLinkActive="active" (click) ="logout()">Uitloggen</a>
+        </div>   
+    </mat-toolbar-row>      
+</mat-toolbar>
+

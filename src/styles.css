@@ -1,0 +1,51 @@
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+body { 
+    font-family: Roboto, Arial, sans-serif;
+    margin: 0;
+  }
+  
+  .basic-container {
+    padding: 30px;
+  }
+  
+  .version-info {
+    font-size: 8pt;
+    float: right;
+  }
+
+  .submit-button {
+    color:black;
+    width: 5cm;
+    height: 1cm;
+    font-size: 0.5cm;
+    
+}
+
+.submit-button:hover{
+  color: green;
+}
+.green-snackbar{
+  color:white;
+  background-color:green;
+  
+}
+.red-snackbar{
+  color:white;
+  background-color:red; 
+  position: absolute !important;
+  top: 25%;
+ 
+}
+
+.updateable-table-column{
+  width: 600px;
+  height: 40px;
+}
+
+.table-info{
+  color: red;
+  font-size: 12px;
+  font-style: italic;
+}
+

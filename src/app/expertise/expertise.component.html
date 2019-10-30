@@ -1,0 +1,780 @@
+<form class="example-form" [formGroup]="expertiseService.expertiseForm">
+ <!-- 
+    <mat-form-field> 
+                     
+        <mat-select [placeholder]="resourceService.cvresources.get('expertiseType')" formControlName="expertiseType">
+            <mat-option *ngFor="let exp of resourceService.expertiseTypes" [value]="exp.value">
+                    {{exp.viewValue}}
+            </mat-option>
+        </mat-select>
+        <mat-error>
+            {{resourceService.cvresources.get('expertiseType') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+    </mat-form-field> 
+
+    <mat-form-field>
+        <input  matInput [placeholder]="resourceService.cvresources.get('expertiseType')"  formControlName="expertiseType" [(ngModel)]="expertiseTypeValue" readonly >
+    </mat-form-field> -->
+
+    <mat-form-field>
+        <input  matInput [placeholder]="resourceService.cvresources.get('description')"  formControlName="description">
+        <mat-error *ngIf="expertiseService.expertiseForm.controls['description'].hasError('required')">
+             {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}  
+        </mat-error>
+        <mat-error *ngIf="expertiseService.expertiseForm.controls['description'].hasError('maxlength')">
+            {{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+' '+100}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-select [placeholder]="resourceService.cvresources.get('expertiseLevel')" formControlName="expertiseLevel">
+            <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                {{expLevel.viewValue}}
+            </mat-option>
+        </mat-select>
+        <mat-error>
+            {{resourceService.cvresources.get('expertiseLevel') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input  matInput [placeholder]="resourceService.cvresources.get('lastYearOfExperience')"  formControlName="lastYearOfExperience">
+        <mat-error *ngIf="expertiseService.expertiseForm.controls['lastYearOfExperience'].hasError('required')">
+            {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}
+        </mat-error>
+        <mat-error *ngIf="expertiseService.expertiseForm.controls['lastYearOfExperience'].hasError('maxlength')">
+            {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}
+        </mat-error>
+        <mat-error *ngIf="expertiseService.expertiseForm.controls['lastYearOfExperience'].hasError('minlength')">
+            {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}
+        </mat-error>
+    </mat-form-field>    
+        
+    <button class="button" mat-button (click)="addExpertiseToTable()">{{resourceService.cvresources.get('add')}}</button>
+
+</form>
+
+   <!-- mat-horizontal-stepper  mat-vertical-stepper -->
+<mat-horizontal-stepper   #stepper (selectionChange)="stepperClicked($event)">
+
+    <!-- EXPERTFIELD -->
+    <mat-step>
+        <ng-template matStepLabel >{{resourceService.cvresources.get('expertField')}}</ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceExpertfield" class="mat-elevation-z8"> 
+
+            <ng-container matColumnDef="expertiseType" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{resourceService.cvresources.get('expertField')}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description" >
+                <th mat-header-cell *matHeaderCellDef > {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.expertField[index]['description'])">
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.description}}  </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'expertField', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'expertField', 100,0)"  [value]="expertiseService.expertField[index]['description']" (input)="expertiseService.expertField[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.expertField[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.expertField[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+' '+100}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>                     
+                </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.expertField[index]['lastYearOfExperience'])">                      
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'expertField', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'expertField', 4, 4)"  [value]="expertiseService.expertField[index]['lastYearOfExperience']" (input)="expertiseService.expertField[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.expertField[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.expertField[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.expertField[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeExpertfieldFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayExpertfield"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayExpertfield;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.expertField.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>         
+    </mat-step>
+    
+    <!-- PROGRAMMER LANGUAGE -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('progLanguage')}}</ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceProgLanguage" class="mat-elevation-z8"> 
+            
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+        
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.progLanguage[index]['description'])">
+                        <app-editable >
+                            <ng-template appViewMode>  {{element.description}}  </ng-template>
+                            <ng-template appEditMode >
+                                <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'progLanguage', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'progLanguage', 100, 0)"  [value]="expertiseService.progLanguage[index]['description']" (input)="expertiseService.progLanguage[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                                <mat-error >
+                                    <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.progLanguage[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                    <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.progLanguage[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                                </mat-error>
+                            </ng-template>
+                        </app-editable>                     
+                    </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select> 
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.progLanguage[index]['lastYearOfExperience'])">                      
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                        <ng-template appEditMode>
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'progLanguage', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'progLanguage', 4, 4)"  [value]="expertiseService.progLanguage[index]['lastYearOfExperience']" (input)="expertiseService.progLanguage[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.progLanguage[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.progLanguage[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.progLanguage[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                             </mat-error>
+                        </ng-template>
+                    </app-editable>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeProgrammerLanguageFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayProgLanguage"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayProgLanguage;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.progLanguage.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>             
+    </mat-step>
+    
+    <!-- DATABASES -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('databases')}} </ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceDatabases" class="mat-elevation-z8"> 
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.databases[index]['description'])">
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.description}}  </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'databases', 100,0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'databases', 100,0)"  [value]="expertiseService.databases[index]['description']" (input)="expertiseService.databases[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.databases[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.databases[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>                     
+                </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.databases[index]['lastYearOfExperience'])">                      
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'databases', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'databases', 4, 4)"  [value]="expertiseService.databases[index]['lastYearOfExperience']" (input)="expertiseService.databases[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.databases[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.databases[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.databases[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeDatabeseFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayDatabases"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayDatabases;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.databases.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>               
+    </mat-step>   
+
+    <!-- TOOLS -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('tools')}} </ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceTools" class="mat-elevation-z8"> 
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.tools[index]['description'])">
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.description}}  </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'tools', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'tools', 100, 0)"  [value]="expertiseService.tools[index]['description']" (input)="expertiseService.tools[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.tools[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.tools[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>                     
+                </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.tools[index]['lastYearOfExperience'])">                      
+                        <app-editable >
+                            <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                            <ng-template appEditMode >
+                                <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'tools', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'tools', 4, 4)"  [value]="expertiseService.tools[index]['lastYearOfExperience']" (input)="expertiseService.tools[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                                <mat-error >
+                                    <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.tools[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                    <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.tools[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                    <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.tools[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                                </mat-error>
+                            </ng-template>
+                        </app-editable>
+                    </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeToolFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayTools"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayTools;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.tools.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>               
+    </mat-step> 
+    
+    <!-- METHODES -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('methodes')}} </ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceMethodes" class="mat-elevation-z8"> 
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.methodes[index]['description'])">
+                        <app-editable >
+                            <ng-template appViewMode>  {{element.description}}  </ng-template>
+                            <ng-template appEditMode >
+                                <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'methodes', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'methodes', 100, 0)"  [value]="expertiseService.methodes[index]['description']" (input)="expertiseService.methodes[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                                <mat-error >
+                                    <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.methodes[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                    <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.methodes[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                                </mat-error>
+                            </ng-template>
+                        </app-editable>                     
+                    </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.methodes[index]['lastYearOfExperience'])">                      
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'methodes', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'methodes', '4', '4')"  [value]="expertiseService.methodes[index]['lastYearOfExperience']" (input)="expertiseService.methodes[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.methodes[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.methodes[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.methodes[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeMethodeFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayMethodes"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayMethodes;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.methodes.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>               
+    </mat-step> 
+    
+    <!-- FRAMEWORKS -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('frameworks')}} </ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceFrameworks" class="mat-elevation-z8"> 
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.frameworks[index]['description'])">
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.description}}  </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'frameworks', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'frameworks', 100, 0)"  [value]="expertiseService.frameworks[index]['description']" (input)="expertiseService.frameworks[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.frameworks[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.frameworks[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>                     
+                </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.frameworks[index]['lastYearOfExperience'])">                      
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'frameworks', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'frameworks', 4, 4)"  [value]="expertiseService.frameworks[index]['lastYearOfExperience']" (input)="expertiseService.frameworks[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.frameworks[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.frameworks[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.frameworks[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeFrameworkFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayFrameworks"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayFrameworks;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.frameworks.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>               
+    </mat-step> 
+    
+    <!-- TESTING -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('testing')}} </ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceTesting" class="mat-elevation-z8"> 
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.testing[index]['description'])">
+                        <app-editable >
+                            <ng-template appViewMode>  {{element.description}}  </ng-template>
+                            <ng-template appEditMode >
+                                <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'testing', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'testing', 100, 0)"  [value]="expertiseService.testing[index]['description']" (input)="expertiseService.testing[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                                <mat-error >
+                                    <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.testing[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                    <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.testing[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                                </mat-error>
+                            </ng-template>
+                        </app-editable>                     
+                    </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.testing[index]['lastYearOfExperience'])">                      
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'testing', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'testing', 4, 4)"  [value]="expertiseService.testing[index]['lastYearOfExperience']" (input)="expertiseService.testing[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.testing[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.testing[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.testing[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeTestingFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayTesting"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayTesting;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.testing.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>               
+    </mat-step> 
+    
+    <!-- SERVERS -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('servers')}} </ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceServers" class="mat-elevation-z8"> 
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.servers[index]['description'])">
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.description}}  </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'servers', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'servers', 100, 0)"  [value]="expertiseService.servers[index]['description']" (input)="expertiseService.servers[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.servers[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.servers[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>                     
+                </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.servers[index]['lastYearOfExperience'])">                      
+                        <app-editable >
+                            <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                            <ng-template appEditMode >
+                                <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'servers', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'servers', 4, 4)"  [value]="expertiseService.servers[index]['lastYearOfExperience']" (input)="expertiseService.servers[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                                <mat-error >
+                                    <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.servers[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                    <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.servers[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                    <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.servers[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                                </mat-error>
+                            </ng-template>
+                        </app-editable>
+                    </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeServerFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayServers"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayServers;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.servers.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+            <button class="button" mat-button matStepperNext>{{resourceService.cvresources.get('next')}}</button>
+        </div>               
+    </mat-step>
+    
+    <!-- IDEs -->
+    <mat-step>
+        <ng-template matStepLabel>{{resourceService.cvresources.get('ide')}} </ng-template>
+        <table mat-table [dataSource]="expertiseService.dataSourceIde" class="mat-elevation-z8"> 
+            <ng-container matColumnDef="expertiseType">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseType')}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.expertiseType}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('description')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index"   (click)="validatorService.setOriginalColumnValue(expertiseService.ide[index]['description'])">
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.description}}  </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'ide', 100, 0)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'description', 'expertiseService', 'ide', 100, 0)"  [value]="expertiseService.ide[index]['description']" (input)="expertiseService.ide[index]['description'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.ide[index]['description']) "> {{resourceService.cvresources.get('description') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.ide[index]['description'], 100)">{{resourceService.cvresources.get('description') + resourceService.cvresources.get('maxLength')+ ' '+100}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>                     
+                </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="expertiseLevel">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('expertiseLevel')}} </th>
+                <td mat-cell *matCellDef="let element">                   
+                    <mat-select [(value)] ="element.expertiseLevel" style="width: 120px;">
+                        <mat-option *ngFor="let expLevel of resourceService.expertiseLevelSelect" [value]="expLevel.value">
+                            {{expLevel.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastYearOfExperience">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('lastYearOfExperience')}} </th>
+                <td mat-cell *matCellDef="let element; let index = index" (click)="validatorService.setOriginalColumnValue(expertiseService.ide[index]['lastYearOfExperience'])">                      
+                    <app-editable >
+                        <ng-template appViewMode>  {{element.lastYearOfExperience}} </ng-template>
+                        <ng-template appEditMode >
+                            <input type="text" class="updateable-table-column" (keyup.enter)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'ide', 4, 4)" (focusout)="validatorService.validateTableColumn($event.target.value, index, 'lastYearOfExperience', 'expertiseService', 'ide', 4, 4)"  [value]="expertiseService.ide[index]['lastYearOfExperience']" (input)="expertiseService.ide[index]['lastYearOfExperience'] =  $event.target.value"  appFocusable appEditOnEnter>
+                            <mat-error >
+                                <p *ngIf="validatorService.isTableColumnEmpty(expertiseService.ide[index]['lastYearOfExperience']) "> {{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('notempty')}}</p>
+                                <p *ngIf="validatorService.validateMaxLengthOfTableColumn(expertiseService.ide[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('maxLength')+ ' '+4}}</p>
+                                <p *ngIf="validatorService.validateMinLengthOfTableColumn(expertiseService.ide[index]['lastYearOfExperience'], 4)">{{resourceService.cvresources.get('lastYearOfExperience') + resourceService.cvresources.get('minLength')+ ' '+4}}</p>
+                            </mat-error>
+                        </ng-template>
+                    </app-editable>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="removeExpertise" >
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('delete')}} </th>
+                <td mat-cell *matCellDef="let row">
+                    <button mat-icon-button class="deleteUser" (click)="expertiseService.removeIdeFromTable(row)">
+                        <mat-icon>launch</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="disable">
+                <th mat-header-cell *matHeaderCellDef> {{resourceService.cvresources.get('disable')}}</th>
+                <td  mat-cell *matCellDef="let row">
+                    <mat-checkbox *ngIf="row.id" (click)="$event.stopPropagation()" (change)="expertiseService.onCheckboxChagen($event)" [checked]="expertiseService.selection.isSelected(row)" [value]="expertiseService.getValue(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="expertiseService.columnsToDisplayIde"></tr>
+            <tr mat-row *matRowDef="let row; columns: expertiseService.columnsToDisplayIde;" class="test1"></tr>
+        </table>
+        <p class ="table-info"  *ngIf="expertiseService.ide.length > 0">{{resourceService.cvresources.get('tableNote')}}</p>
+        <div>
+            <button class="button" mat-button matStepperPrevious>{{resourceService.cvresources.get('back')}}</button>
+        </div>               
+    </mat-step>
+</mat-horizontal-stepper>
